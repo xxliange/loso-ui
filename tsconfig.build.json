@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./es",
+        "module": "esnext",
+        "target": "ES5",
+        "declaration": true,
+        "declarationDir": "es",
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node"
+    },
+    "exclude": [
+        "**/__tests__/**",
+        "**/demo/**",
+        "node_modules",
+        "lib",
+        "esm"
+    ]
+}

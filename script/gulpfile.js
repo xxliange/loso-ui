@@ -10,6 +10,8 @@ const autoprefixer = require("gulp-autoprefixer");
 const cssnano = require("gulp-cssnano");
 const size = require("gulp-filesize");
 const sourcemaps = require("gulp-sourcemaps");
+const babel = require("gulp-babel");
+const through2 = require("through2");
 const rename = require("gulp-rename");
 const { name } = require("../package.json");
 const browserList = [
@@ -19,6 +21,7 @@ const browserList = [
     "not ie < 9"
 ];
 
+
 const DIR = {
     sass: path.resolve(__dirname, "../components/**/*.scss"),
     buildSrc: [
@@ -27,8 +30,46 @@ const DIR = {
     ],
     lib: path.resolve(__dirname, "../lib"),
     es: path.resolve(__dirname, "../es"),
-    dist: path.resolve(__dirname, "../dist")
+    dist: path.resolve(__dirname, "../dist"),
+    scripts: path.resolve(__dirname, '../components/**/style/*.{ts,tsx}')
 };
+
+function cssInjection(content) {
+    return content
+        .replace(/\/style\/?'/g, "/style/css'")
+        .replace(/\/style\/?"/g, '/style/css"')
+        .replace(/\.scss/g, '.css');
+}
+function compileScripts(babelEnv, destDir) {
+    process.env.BABEL_ENV = babelEnv;
+    return src(DIR.scripts)
+        .pipe(babel()) // 使用gulp-babel处理
+        .pipe(
+            through2.obj(function z(file, encoding, next) {
+                this.push(file.clone());
+                // 找到目标
+                if (file.path.match(/(\/|\\)style(\/|\\)index\.js/)) {
+                    const content = file.contents.toString(encoding);
+                    file.contents = Buffer.from(cssInjection(content)); // 处理文件内容
+                    file.path = file.path.replace(/index\.js/, 'css.js'); // 文件重命名
+                    this.push(file); // 新增该文件
+                    next();
+                } else {
+                    next();
+                }
+            }),
+        )
+        .pipe(dest(destDir));
+}
+
+function compileESM() {
+    return compileScripts('es', DIR.es);
+}
+
+function compileLIB() {
+    return compileScripts('lib', DIR.lib);
+}
+
 
 function copySass() {
     return src(DIR.sass)
@@ -73,4 +114,4 @@ function dist() {
         .pipe(dest(DIR.dist));
 };
 
-exports.default = series(parallel(copyCss, copySass, dist));
+exports.default = parallel(compileESM, compileLIB, copyCss, copySass, dist);

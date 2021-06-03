@@ -2,7 +2,7 @@ import React from 'react';
 
 const Avatar = () => {
     return (
-        <div>
+        <div className="LOSO-avatar">
             avatar component
         </div>
     )

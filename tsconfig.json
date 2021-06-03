@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "loso-ui": [
+                "components/index.tsx"
+            ],
+            "loso-ui/es/*": [
+                "components/*"
+            ],
+            "loso-ui/lib/*": [
+                "components/*"
+            ]
+        },
+        "outDir": "esm",
+        "strictNullChecks": true,
+        "declaration": true,
+        "declarationDir": "lib",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "jsx": "react",
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
+        "noImplicitAny": true,
+        "target": "es5",
+        "module": "commonjs",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "**/__tests__/**",
+        "**/demo/**",
+        "node_modules",
+        "lib",
+        "esm",
+        "build",
+        "dist"
+    ],
+    "include": [
+        "components"
+    ]
+}
