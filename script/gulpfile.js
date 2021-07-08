@@ -3,9 +3,9 @@
  */
 
 const path = require("path");
-const { src, dest, series, parallel } = require("gulp");
+const { src, dest, parallel } = require("gulp");
 const concat = require("gulp-concat");
-const sass = require("gulp-sass");
+const less = require("gulp-less");
 const autoprefixer = require("gulp-autoprefixer");
 const cssnano = require("gulp-cssnano");
 const size = require("gulp-filesize");
@@ -23,10 +23,10 @@ const browserList = [
 
 
 const DIR = {
-    sass: path.resolve(__dirname, "../components/**/*.scss"),
+    less: path.resolve(__dirname, "../components/**/*.less"),
     buildSrc: [
-        path.resolve(__dirname, "../components/**/styles.scss"),
-        path.resolve(__dirname, "../components/**/index.scss")
+        path.resolve(__dirname, "../components/**/styles.less"),
+        path.resolve(__dirname, "../components/**/index.less")
     ],
     lib: path.resolve(__dirname, "../lib"),
     es: path.resolve(__dirname, "../es"),
@@ -38,7 +38,7 @@ function cssInjection(content) {
     return content
         .replace(/\/style\/?'/g, "/style/css'")
         .replace(/\/style\/?"/g, '/style/css"')
-        .replace(/\.scss/g, '.css');
+        .replace(/\.less/g, '.css');
 }
 function compileScripts(babelEnv, destDir) {
     process.env.BABEL_ENV = babelEnv;
@@ -71,8 +71,8 @@ function compileLIB() {
 }
 
 
-function copySass() {
-    return src(DIR.sass)
+function copyLess() {
+    return src(DIR.less)
         .pipe(dest(DIR.lib))
         .pipe(dest(DIR.es))
 };
@@ -80,7 +80,7 @@ function copySass() {
 function copyCss() {
     return src(DIR.buildSrc)
         .pipe(sourcemaps.init())
-        .pipe(sass({
+        .pipe(less({
             outputStyle: "compressed"
         }))
         .pipe(autoprefixer({ browsers: browserList }))
@@ -93,7 +93,7 @@ function copyCss() {
 function dist() {
     return src(DIR.buildSrc)
         .pipe(sourcemaps.init())
-        .pipe(sass({
+        .pipe(less({
             outputStyle: "compressed"
         }))
         .pipe(autoprefixer({ browsers: browserList }))
@@ -114,4 +114,4 @@ function dist() {
         .pipe(dest(DIR.dist));
 };
 
-exports.default = parallel(compileESM, compileLIB, copyCss, copySass, dist);
+exports.default = parallel(compileESM, compileLIB, copyCss, copyLess, dist);

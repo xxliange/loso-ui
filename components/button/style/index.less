@@ -1,0 +1,77 @@
+@import "./../../style/vars.less";
+@import './../../style/mixins/button.less';
+@prefixCls: loso-btn;
+
+.@{prefixCls} {
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    height: @button-default-height;
+    line-height: 1.5;
+    user-select: none;
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    background-color: #fff;
+    color: @font-color;
+    border-color: @default-color;
+    outline: none;
+    border-radius: @border-radius;
+    .loso-btn-hover(@default-color);
+
+    &.@{prefixCls}-primary {
+        .loso-btn-hover(@primary-color);
+
+        &.@{prefixCls}-hollow {
+            .loso-btn-hollow(@primary-color);
+        }
+    }
+
+    &.@{prefixCls}-default {
+        color: @font-color;
+        background-color: #fff;
+        border: 1px solid @default-color;
+        text-shadow: none;
+
+        &:not(.@{prefixCls}-disabled):not(.@{prefixCls}-loading) {
+
+            &:hover,
+            &:active {
+                border: 1px solid @primary-color;
+                color: @primary-color;
+            }
+        }
+
+        &.@{prefixCls}-hollow {
+            .loso-btn-hollow(@default-color);
+        }
+    }
+    &.@{prefixCls}-dashed{
+        border: 1px dashed @border-color;
+    }
+    &.@{prefixCls}-disabled {
+        cursor: not-allowed;
+        opacity: @button-disabled-opacity;
+
+        &.@{prefixCls}-hollow {
+            background-color: transparent !important;
+        }
+
+    }
+
+    &.@{prefixCls}-sm {
+        font-size: @button-small-font-size;
+        height: @button-small-height;
+        padding: @button-small-padding;
+    }
+
+    &.@{prefixCls}-lg {
+        font-size: @button-large-font-size;
+        height: @button-large-height;
+        padding: @button-large-padding;
+    }
+}

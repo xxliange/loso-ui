@@ -1,8 +1,6 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 
 const { name } = require("../package.json");
 const { resolve, getProjectPath } = require('./utils/projectHelpers');
@@ -10,15 +8,29 @@ const pkg = require(getProjectPath("package.json"));
 
 const config = {
     mode: "production",
+    devtool: 'source-map',
+    stats: "normal",
     entry: {
-        [name]: ["./components/index.ts"]
+        "loso-ui": ["./components"],
+        "loso-ui.min": ["./components"]
     },
     output: {
         library: name,
         libraryTarget: "umd",
         umdNamedDefine: true,
         path: path.join(process.cwd(), "dist"),
-        filename: "[name].min.js"
+        filename: "[name].js"
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                include: /\.min\.js$/,
+            })
+        ]
+    },
+    cache: {
+        type: "filesystem",
     },
     resolve: {
         modules: ['node_modules', path.join(__dirname, 'node_modules')],
@@ -124,16 +136,10 @@ const config = {
         ]
     },
     optimization: {
+        minimize: true,
         minimizer: [
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                uglifyOptions: {
-                    compress: {
-                        drop_debugger: true,
-                        drop_console: false
-                    }
-                }
+            new TerserPlugin({
+                include: /\.min\.js$/,
             })
         ],
         noEmitOnErrors: true
